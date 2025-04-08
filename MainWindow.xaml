@@ -1,0 +1,99 @@
+﻿<!--  ファイルパス: MainWindow.xaml  -->
+<wpfui:FluentWindow
+    x:Class="Sample3.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:vm="clr-namespace:Sample3.ViewModels"
+    xmlns:wpfui="http://schemas.lepo.co/wpfui/2022/xaml"
+    Title="To-Doリストアプリ"
+    Width="800"
+    Height="450">
+
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <wpfui:ThemesDictionary Theme="Dark" />
+                <wpfui:ControlsDictionary />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
+
+    <Window.DataContext>
+        <vm:MainViewModel />
+    </Window.DataContext>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="10*" />
+        </Grid.RowDefinitions>
+
+        <wpfui:TitleBar
+            Title="Sample"
+            Grid.Row="0"
+            Icon="{wpfui:SymbolIcon Symbol=DeveloperBoard16}" />
+
+
+        <wpfui:Card
+            Grid.Row="1"
+            Margin="20"
+            Padding="20"
+            VerticalAlignment="Top">
+            <StackPanel>
+                <wpfui:TextBlock
+                    Margin="0,0,0,10"
+                    FontSize="24"
+                    FontWeight="Bold"
+                    Text="To-Doリスト" />
+                <!--  新規タスク入力エリア  -->
+                <WrapPanel Orientation="Horizontal">
+                    <wpfui:TextBox
+                        Width="400"
+                        Margin="0,0,10,0"
+                        VerticalAlignment="Center"
+                        Text="{Binding NewTaskTitle, UpdateSourceTrigger=PropertyChanged}" />
+                    <wpfui:Button
+                        VerticalAlignment="Center"
+                        Command="{Binding AddTaskCommand}"
+                        Content="追加" />
+                </WrapPanel>
+                <Separator Margin="10" />
+                <!--  タスク一覧表示  -->
+                <wpfui:ListView Margin="0,10,0,0" ItemsSource="{Binding Tasks}">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <Grid Margin="5">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="1*" />
+                                    <ColumnDefinition Width="6*" />
+                                    <ColumnDefinition Width="4*" />
+                                </Grid.ColumnDefinitions>
+                                <!--  完了状態切替用チェックボックス  -->
+                                <CheckBox
+                                    Grid.Column="0"
+                                    VerticalAlignment="Center"
+                                    Command="{Binding DataContext.ToggleTaskCompletionCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                    CommandParameter="{Binding}"
+                                    IsChecked="{Binding IsCompleted}" />
+                                <!--  タスクタイトル表示  -->
+                                <TextBlock
+                                    Grid.Column="1"
+                                    Margin="10,0,0,0"
+                                    VerticalAlignment="Center"
+                                    FontSize="16"
+                                    Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                                    Text="{Binding Title}" />
+                                <!--  タスク削除ボタン  -->
+                                <wpfui:Button
+                                    Grid.Column="2"
+                                    Appearance="Danger"
+                                    Command="{Binding DataContext.RemoveTaskCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                    CommandParameter="{Binding}"
+                                    Content="削除" />
+                            </Grid>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </wpfui:ListView>
+            </StackPanel>
+        </wpfui:Card>
+    </Grid>
+</wpfui:FluentWindow>
